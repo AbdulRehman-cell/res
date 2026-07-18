@@ -2,8 +2,26 @@ services:
   - type: web
     name: res-app
     env: node
-    region: oregon
-    buildCommand: npm install && npm run build --prefix client
+    plan: starter
+    buildCommand: npm --prefix client install && npm --prefix client run build
     startCommand: node server/index.js
     envVars:
-      MONGODB_URI: your_mongodb_uri
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        fromDatabase: mongo
+      - key: MONGO_INITDB_ROOT_USERNAME
+        fromSecret: mongo-root-user
+      - key: MONGO_INITDB_ROOT_PASSWORD
+        fromSecret: mongo-root-pass
+    healthCheck:
+      path: /health
+      interval: 30s
+      timeout: 10s
+      healthyThreshold: 2
+      unhealthyThreshold: 2
+
+databases:
+  - name: mongo
+    type: MONGO
+    plan: free
