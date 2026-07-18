@@ -854,4 +854,3 @@ button, input, textarea, select {
 .admin-list-content { flex: 1; }
 .admin-list-actions { display: flex; gap: 0.5rem; }
 .admin-btn-danger { background: var(--clr-error); color: white; }
-</style>

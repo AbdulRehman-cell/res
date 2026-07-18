@@ -1,25 +1,17 @@
-# Base image for dependencies
-FROM node:18.17.0 AS dependencies
+# ForgeAI MERN app — build the Vite client, run the Express server
+FROM node:20-alpine AS client-build
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm install --production --legacy-peer-deps
-
-# Build stage for client
-FROM node:18.17.0 AS builder
-WORKDIR /app
-COPY client/package.json client/package-lock.json ./client/
+COPY client/package.json ./client/
 RUN npm install --prefix client
 COPY client ./client
 RUN npm run build --prefix client
 
-# Final image for production
-FROM node:18.17.0 AS runtime
+FROM node:20-alpine
 WORKDIR /app
-COPY --from=dependencies /app/node_modules ./node_modules
-COPY --from=builder /app/client/build ./client/build
-COPY server ./server
+ENV NODE_ENV=production
 COPY package.json ./
+RUN npm install --omit=dev
+COPY server ./server
+COPY --from=client-build /app/client/dist ./client/dist
+EXPOSE 4000
 CMD ["node", "server/index.js"]
-
-# Healthcheck for the service
-HEALTHCHECK CMD curl --fail http://localhost:3000/health || exit 1
