@@ -1,4 +1,3 @@
-```Dockerfile
 # Use an official Node.js runtime as a parent image
 FROM node:18.17.0 AS build
 
