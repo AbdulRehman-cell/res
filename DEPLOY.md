@@ -1,26 +1,37 @@
-# Deployment Guide for Project Res
+# Deployment Guide for Res App
 
-Follow these steps to deploy the application to Render.
+This guide will help you deploy the Res application in under 5 minutes.
 
-## Step 1: Clone the repository
-```bash
-git clone https://github.com/yourusername/res.git
-cd res
-```
+## Prerequisites
+1. Install Docker: [Get Docker](https://docs.docker.com/get-docker/)
+2. Install Docker Compose: [Get Docker Compose](https://docs.docker.com/compose/install/)
+3. An account on Render with the Render CLI installed: [Render Docs](https://render.com/docs/deploy-nodejs)
 
-## Step 2: Create .env file
-Copy the example environment variables:
-```bash
-cp .env.example .env
-# Edit .env file and add your MongoDB connection string
-```
+## Step-by-Step Deployment
 
-## Step 3: Deploy using Docker
-Make sure Docker is installed, then run the following commands:
-```bash
-docker-compose build  # Build the Docker images
-docker-compose up -d   # Start the services in detached mode
-```
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your_username/res.git
+   cd res
+   ```
 
-## Step 4: Access your application
-Once all services are up, you can access your application at http://localhost:3000.
+2. **Create a `.env` file:**
+   Copy `.env.example` to `.env` and fill in the MongoDB URI.
+   ```bash
+   cp .env.example .env
+   ```
+
+3. **Build the Docker image:**
+   Make sure you are in the project directory, and run:
+   ```bash
+   docker-compose up --build -d
+   ```
+
+4. **Deploy to Render:**
+   If you have Render CLI set up, use the following command:
+   ```bash
+   npx render-cli deploy
+   ```
+
+5. **Check application health:**
+   Access `http://localhost:3000/health` to ensure the application is running properly.

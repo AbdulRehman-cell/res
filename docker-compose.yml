@@ -1,5 +1,4 @@
 version: '3.8'
-
 services:
   app:
     build:
@@ -9,17 +8,25 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - MONGO_URI=${MONGO_URI}
+      - MONGODB_URI=${MONGODB_URI}
       - PORT=3000
     depends_on:
-      - mongo
-
-  mongo:
-    image: mongo:6.0.6
+      - db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      
+  db:
+    image: mongo:6.0.5
     ports:
       - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
     volumes:
       - mongo-data:/data/db
-
+      
 volumes:
   mongo-data:

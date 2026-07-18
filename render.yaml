@@ -1,19 +1,9 @@
-version: 1
 services:
-  web:
-    type: web
+  - type: web
+    name: res-app
     env: node
-    plan: free
-    buildCommand: npm install
-    startCommand: npm start
+    region: oregon
+    buildCommand: npm install && npm run build --prefix client
+    startCommand: node server/index.js
     envVars:
-      NODE_ENV: production
-      MONGO_URI: your_mongodb_uri_here
-    autoDeploy: true
-    healthCheck:
-      path: /health
-      healthyThreshold: 3
-      unhealthyThreshold: 3
-      checkIntervalSeconds: 30
-      timeoutSeconds: 5
-      intervalSeconds: 60
+      MONGODB_URI: your_mongodb_uri

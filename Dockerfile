@@ -1,24 +1,25 @@
-# Use an official Node.js runtime as a parent image
-FROM node:18.17.0 AS build
-
-# Set the working directory
+# Base image for dependencies
+FROM node:18.17.0 AS dependencies
 WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm install --production --legacy-peer-deps
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy the client files and build
+# Build stage for client
+FROM node:18.17.0 AS builder
+WORKDIR /app
+COPY client/package.json client/package-lock.json ./client/
+RUN npm install --prefix client
 COPY client ./client
-RUN npm --prefix client install && npm --prefix client run build
+RUN npm run build --prefix client
 
-# Copy the server files
+# Final image for production
+FROM node:18.17.0 AS runtime
+WORKDIR /app
+COPY --from=dependencies /app/node_modules ./node_modules
+COPY --from=builder /app/client/build ./client/build
 COPY server ./server
-
-# Expose the port your app runs on
-EXPOSE 3000
-
-# Start the application
+COPY package.json ./
 CMD ["node", "server/index.js"]
+
+# Healthcheck for the service
+HEALTHCHECK CMD curl --fail http://localhost:3000/health || exit 1
